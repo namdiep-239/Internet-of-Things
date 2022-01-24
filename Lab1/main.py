@@ -1,16 +1,18 @@
 print("IoT Gateway")
-print("Xin chào ThingsBoard")
-
-#thư viện
+#library
 import paho.mqtt.client as mqttclient
 import time
 import json
+# locate library
+import requests
+import winrt.windows.devices.geolocation as wdg, asyncio
+
 
 BROKER_ADDRESS = "demo.thingsboard.io"
 PORT = 1883
 THINGS_BOARD_ACCESS_TOKEN = "PYQmBpK0IuMPNR5N8Dsa"
 
-# hàm
+# functions
 def subscribed(client, userdata, mid, granted_qos):
     print("Subscribed...")
 
@@ -35,6 +37,15 @@ def connected(client, usedata, flags, rc):
         print("Connection is failed")
 
 
+# location functions
+async def getCoords():
+    locator = wdg.Geolocator()
+    pos = await locator.get_geoposition_async()
+    return [pos.coordinate.latitude, pos.coordinate.longitude]
+
+def getLoc():
+    return asyncio.run(getCoords())
+
 client = mqttclient.Client("Gateway_Thingsboard")
 client.username_pw_set(THINGS_BOARD_ACCESS_TOKEN)
 
@@ -47,19 +58,22 @@ client.on_message = recv_message
 
 temp = 30
 humi = 50
-light_intensity = 100
 
-longitude = 106.7
-latitude = 10.6
+longitude = 106.6297
+latitude = 10.8231
 
 counter = 0
 while True:
-    collect_data = {'temperature': temp, 'humidity': humi, 'light':light_intensity,
+    collect_data = {'temperature': temp, 'humidity': humi,
                     'longitude': longitude, 'latitude':latitude}
     temp += 1
     humi += 1
-    light_intensity += 1
-    latitude += 1
-    longitude += 0.5
+
+    location = getLoc()
+    latitude = location[0]
+    longitude = location[1]
+
     client.publish('v1/devices/me/telemetry', json.dumps(collect_data), 1)
     time.sleep(10)
+
+
