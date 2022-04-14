@@ -40,7 +40,7 @@ namespace Dashboard
         //public string Machine_Id;
         //public string Topic_to_Subcribe = "";
         //public string msg_received_from_topic = "";
-        public Text error_display;
+
 
         //Topics is stored in a list
         public List<string> topics = new List<string>();
@@ -105,14 +105,22 @@ namespace Dashboard
         {
             base.OnConnected();
             GetComponent<DashboardManager>().SwitchLayer();
-            SubscribeTopics();
-            error_display.text = "";
+            //SubscribeTopics();
+            //GetComponent<DashboardManager>().ClearError();
+        }
+
+        public override void Connect()
+        {
+            base.Connect();
+            GetComponent<DashboardManager>().ClearError();
         }
 
         protected override void OnConnectionFailed(string errorMessage)
         {
             Debug.Log("CONNECTION FAILED! " + errorMessage);
-            error_display.text = "Connection Failed!";
+            GetComponent<DashboardManager>().DisplayError();
+
+            Disconnect(); //??? Tai sao phai disconnect thi moi duoc??
         }
 
         protected override void OnDisconnected()
@@ -173,7 +181,7 @@ namespace Dashboard
             }
 
         }
-        
+
         protected override void DecodeMessage(string topic, byte[] message)
         {
             string msg = System.Text.Encoding.UTF8.GetString(message);
@@ -214,7 +222,7 @@ namespace Dashboard
         {
             _control_data = GetComponent<DashboardManager>().Update_Led_Value(_control_data);
             string msg_led = JsonConvert.SerializeObject(_control_data);
-            
+
             client.Publish(topics[1], System.Text.Encoding.UTF8.GetBytes(msg_led), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);
             Debug.Log("publish led");
 
@@ -224,7 +232,7 @@ namespace Dashboard
         {
             _control_data = GetComponent<DashboardManager>().Update_Pump_Value(_control_data);
             string msg_pump = JsonConvert.SerializeObject(_control_data);
-            
+
             client.Publish(topics[2], System.Text.Encoding.UTF8.GetBytes(msg_pump), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, true);
             Debug.Log("publish pump");
 

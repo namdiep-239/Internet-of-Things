@@ -35,12 +35,26 @@ namespace Dashboard
         public Image[] Temp_Gause_points;
         [SerializeField]
         public Image[] Humi_Gause_points;
+        
+        [SerializeField]
+        public Text error_display;
 
         float MaxValue = 100;
 
 
         //public GameObject sceneLogin;
         //public GameObject sceneDB;
+
+        //////////Error Handle////////
+        public void DisplayError()
+        {
+            error_display.text = "Connection Failed!";
+        }
+
+        public void ClearError()
+        {
+            error_display.text = "";
+        }
 
         ///////////DOtween Effect///////////
         private Tween twenFade;
@@ -102,6 +116,7 @@ namespace Dashboard
             //Update at Text
             temperature.text = _status_data.temperature + "°C";
             humidity.text = _status_data.humidity + "%";
+
             //Update at Gause
             float temp_value = float.Parse(_status_data.temperature);
             GauseFiller(Temp_Gause_points ,temp_value);
