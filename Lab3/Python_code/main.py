@@ -66,7 +66,7 @@ def recv_message(client, userdata, message):
         jsonobj = json.loads(message.payload)
         if jsonobj['method'] == "setLED":
             # update cmd (to send to board)
-            if (jsonobj['params'] == True):
+            if (jsonobj['params']['led'] == True):
                 cmd = LED_ON
             else:
                 cmd = LED_OFF
@@ -107,15 +107,9 @@ client.loop_start()
 client.on_subscribe = subscribed
 client.on_message = recv_message
 
-temperature = light = 0
 while True:
 
     if len(bbc_port) >  0:
         readSerial()
-
-    # temperature = random.randint(0, 100)
-    # light = random.randint(0, 100)
-    # data = {"temperature": temperature, "light": light}
-    # client.publish("v1/devices/me/telemetry", json.dumps(data), 1, True)
 
     time.sleep(1)
