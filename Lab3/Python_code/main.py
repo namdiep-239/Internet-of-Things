@@ -19,7 +19,7 @@ FAN_OFF = 3
 #TODO: Add your token and your comport
 #Please check the comport in the device manager
 THINGS_BOARD_ACCESS_TOKEN = "jMLIodZd0prPq3QZqtnO"
-bbc_port = "COM4"
+bbc_port = ""
 if len(bbc_port) > 0:
     ser = serial.Serial(port=bbc_port, baudrate=115200)
 
@@ -66,7 +66,7 @@ def recv_message(client, userdata, message):
         jsonobj = json.loads(message.payload)
         if jsonobj['method'] == "setLED":
             # update cmd (to send to board)
-            if (jsonobj['params']['led'] == True):
+            if (jsonobj['params'] == True):
                 cmd = LED_ON
             else:
                 cmd = LED_OFF
