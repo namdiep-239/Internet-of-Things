@@ -19,7 +19,7 @@ FAN_OFF = 3
 #TODO: Add your token and your comport
 #Please check the comport in the device manager
 THINGS_BOARD_ACCESS_TOKEN = "jMLIodZd0prPq3QZqtnO"
-bbc_port = ""
+bbc_port = "COM9"
 if len(bbc_port) > 0:
     ser = serial.Serial(port=bbc_port, baudrate=115200)
 
@@ -72,7 +72,7 @@ def recv_message(client, userdata, message):
                 cmd = LED_OFF
             # publish status of LED to server
             temp_data = {"led": jsonobj['params']}
-            client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1, True)
+            client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1)
 
         if jsonobj['method'] == "setFAN":
             # update cmd (to send to board)
@@ -82,7 +82,7 @@ def recv_message(client, userdata, message):
                 cmd = FAN_OFF
             # publish status of FAN to server
             temp_data = {"fan": jsonobj['params']}
-            client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1, True)
+            client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1)
     except:
         pass
 
